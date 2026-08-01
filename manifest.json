@@ -2,7 +2,7 @@
   "name": "咩咩工作台",
   "short_name": "咩咩工作台",
   "description": "咩咩工作台 · 增强版 - 个人效率管理工具",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#4A90E2",
@@ -26,5 +26,6 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ]
+  ],
+  "scope": "./"
 }
