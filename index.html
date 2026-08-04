@@ -6166,12 +6166,8 @@ function checkReminders(){var now=new Date();var hm=String(now.getHours()).padSt
 if(typeof Notification!=='undefined'&&Notification.permission==='default')Notification.requestPermission();
 init();
 
-/* ===== PWA模式自动检测并提示导入数据 ===== */
+/* ===== 首次打开自动提示导入数据 ===== */
 window.addEventListener('load', function(){
-  // 检测是否为PWA standalone模式（从主屏幕图标打开）
-  var isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-  if(!isStandalone) return; // 非PWA模式不处理
-
   // 检查localStorage中是否已有mm2_数据
   var hasData = false;
   for(var i=0;i<localStorage.length;i++){
@@ -6181,14 +6177,20 @@ window.addEventListener('load', function(){
       break;
     }
   }
+  // 已有数据则不提示
+  if(hasData) return;
 
-  // 如果PWA模式下没有数据，且MIGRATE_DATA有数据，自动弹出导入提示
+  // 用sessionStorage防止刷新重复弹窗
+  if(sessionStorage.getItem('mm2_migratePrompted')) return;
+
+  // 如果没有数据，且MIGRATE_DATA有数据，自动弹出导入提示
   var mData = window.MIGRATE_DATA;
-  if(!hasData && mData && Object.keys(mData).length > 0){
+  if(mData && Object.keys(mData).length > 0){
+    sessionStorage.setItem('mm2_migratePrompted','1');
     setTimeout(function(){
       var keys=Object.keys(mData);
       var body='<div style="margin-bottom:14px;padding:14px;border-radius:10px;background:linear-gradient(135deg,#4A90E2,#357ABD);color:#fff;font-size:14px;line-height:1.6">'
-        +'📱 检测到您从主屏幕图标打开，但本地暂无数据。<br><br>'
+        +'📱 检测到本地暂无数据。<br><br>'
         +'点击下方"确认导入"即可将电脑版数据同步到本设备。</div>'
         +'<div style="max-height:200px;overflow-y:auto;padding:8px;border-radius:8px;background:var(--bg);margin-bottom:14px">'
         +keys.map(function(k){
@@ -6198,7 +6200,7 @@ window.addEventListener('load', function(){
       if(typeof showModal==='function'){
         showModal('📥 导入数据',body);
       }
-    },500);
+    },1000);
   }
 });
 
