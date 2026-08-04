@@ -85,6 +85,10 @@ function exportMyData(){
   a.click();
   toast('已导出数据备份');
 }
+/* 将module作用域函数绑定到window，使onclick可调用 */
+window.openMigrateModal = openMigrateModal;
+window.doMigrate = doMigrate;
+window.exportMyData = exportMyData;
 
 </script><style>.buttonsCard-bTXa5j {
   padding: var(--spacer-4);
